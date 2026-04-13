@@ -1,0 +1,180 @@
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║       ⚽ FM DATALAB v3 - SISTEMA MULTI-PÁGINA ⚽              ║
+║                                                               ║
+║       Análisis avanzado de jugadores de Football Manager     ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+
+🚀 INICIO RÁPIDO
+═══════════════════════════════════════════════════════════════
+
+WINDOWS:
+--------
+1. Doble click en: EJECUTAR.bat
+2. Esperá que se abra el navegador
+3. ¡Listo! Verás la página de inicio
+
+
+MAC / LINUX:
+------------
+1. Abrí la terminal en esta carpeta
+2. Ejecutá: ./EJECUTAR.sh
+3. ¡Listo! Verás la página de inicio
+
+
+MANUAL (cualquier sistema):
+---------------------------
+1. Instalá dependencias:
+   pip install -r requirements.txt
+
+2. Ejecutá la app:
+   streamlit run fm_datalab_home.py
+
+
+📊 PÁGINAS DISPONIBLES
+═══════════════════════════════════════════════════════════════
+
+🏠 HOME
+   Página principal con selector de modos
+
+🔍 SIMILITUD
+   Encontrá jugadores similares basándote en perfiles
+   - 16 perfiles diferentes
+   - 5 métricas de similitud
+   - Filtro mejorado de posición
+   - Ponderación personalizable
+
+⚖️ COMPARACIÓN
+   Explorá y comparar jugadores del dataset
+   - Vista de tabla completa
+   - Filtros avanzados
+   - Ordenar por cualquier stat
+   - Comparación visual
+
+📊 DIFERENCIAS
+   Analizá diferencias vs el promedio
+   - Ver desviaciones
+   - Identificar outliers
+   - Fortalezas y debilidades
+
+
+🆕 NUEVO: FILTRO DE POSICIÓN MEJORADO
+═══════════════════════════════════════════════════════════════
+
+Ahora en la página de SIMILITUD podés elegir la posición EXACTA:
+
+Ejemplo: Si un jugador puede jugar MD(D) y MD(A)
+→ Antes: Solo filtraba por "MD" (todos los mediocampistas)
+→ Ahora: Elegís específicamente "MD(A)" o "MD(D)"
+
+Soporta todos los formatos de FM:
+✓ DF(C), MD(D/A)  → Detecta: DF(C), MD(D), MD(A)
+✓ MC/MD(A)        → Detecta: MC(A), MD(A)
+✓ DL(A)          → Detección exacta
+
+
+📖 CÓMO USAR
+═══════════════════════════════════════════════════════════════
+
+1. EJECUTAR LA APP
+   → Doble click en EJECUTAR.bat (Windows)
+   → ./EJECUTAR.sh (Mac/Linux)
+
+2. CARGAR CSV
+   → Sidebar → "Browse files"
+   → Seleccionar tu archivo CSV de FM
+   → Formato: separador ";" y encoding UTF-8
+
+3. ELEGIR MODO
+   → Desde HOME, elegir qué querés hacer:
+   
+   🔍 SIMILITUD
+      Para: Encontrar reemplazos directos
+      
+   ⚖️ COMPARACIÓN
+      Para: Explorar el dataset completo
+      
+   📊 DIFERENCIAS
+      Para: Identificar outliers
+
+4. NAVEGAR
+   → Usá el sidebar para cambiar de página
+   → Los datos se mantienen entre páginas
+
+
+🎯 WORKFLOW RECOMENDADO
+═══════════════════════════════════════════════════════════════
+
+PARA BUSCAR UN REEMPLAZO:
+
+1. Cargá tu CSV en HOME
+2. Ir a SIMILITUD
+3. Seleccionar jugador a reemplazar
+4. Elegir perfil (ej: "Delantero Centro")
+5. Filtrar por posición ESPECÍFICA (ej: "DL(A)")
+6. Ajustar % de minutos
+7. CALCULAR
+8. Exportar top resultados
+
+PARA EXPLORAR OPCIONES:
+
+1. Ir a COMPARACIÓN
+2. Filtrar por posición y minutos
+3. Seleccionar stats relevantes
+4. Ordenar por la stat que te interese
+5. Exportar tabla
+
+PARA ENCONTRAR OUTLIERS:
+
+1. Ir a DIFERENCIAS
+2. Aplicar filtros
+3. Seleccionar stats clave
+4. Ver quién destaca vs promedio
+
+
+🆘 PROBLEMAS COMUNES
+═══════════════════════════════════════════════════════════════
+
+"Python no está instalado"
+→ Descargá desde: https://www.python.org/downloads/
+→ Marcá "Add Python to PATH" durante instalación
+
+"ModuleNotFoundError"
+→ Ejecutá: pip install -r requirements.txt
+
+"Error al cargar CSV"
+→ Verificá separador ";" (punto y coma)
+→ Verificá encoding UTF-8
+→ Verificá columnas: jugador, posición, minutos
+
+"No aparecen las páginas"
+→ Verificá que la carpeta "pages/" esté presente
+→ Ejecutá desde la carpeta correcta
+
+"Pool con menos de 30 jugadores"
+→ Reducí % de minutos
+→ Desactivá filtro de posición
+→ Usá dataset más grande
+
+
+💡 CONSEJOS
+═══════════════════════════════════════════════════════════════
+
+✓ Cargá el CSV UNA SOLA VEZ - se comparte entre páginas
+✓ Navegá libremente - los datos persisten
+✓ Exportá resultados desde cada página
+✓ Combiná páginas para análisis completo
+
+
+📚 DOCUMENTACIÓN COMPLETA
+═══════════════════════════════════════════════════════════════
+
+Leé README_MULTIPAGINA.md para instrucciones detalladas
+
+
+═══════════════════════════════════════════════════════════════
+Desarrollado para la comunidad de Football Manager
+Versión: 3.0 - Sistema Multi-Página
+═══════════════════════════════════════════════════════════════
