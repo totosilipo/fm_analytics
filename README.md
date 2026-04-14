@@ -1,5 +1,5 @@
 ---
-title: FM DataLab v3
+title: FM Analytics
 emoji: ⚽
 colorFrom: green
 colorTo: blue
@@ -10,7 +10,7 @@ pinned: false
 license: mit
 ---
 
-# ⚽ FM DataLab v3
+# ⚽ FM Analytics
 
 Análisis avanzado de jugadores de Football Manager.
 

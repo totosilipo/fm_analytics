@@ -1,5 +1,5 @@
 """
-FM DataLab v3 - Home
+FM Analytics - Home
 ====================
 Página principal con selector de modos y carga centralizada.
 """
@@ -14,7 +14,7 @@ from utils_common import inject_css, sidebar_carga_datos
 # ═══════════════════════════════════════════════════════════════
 
 st.set_page_config(
-    page_title="FM DataLab v3",
+    page_title="FM Analytics",
     page_icon="⚽",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -166,7 +166,7 @@ with st.sidebar:
 st.markdown("""
 <div class="hero-wrap">
     <p class="hero-fm">FM</p>
-    <p class="hero-datalab">DataLab v3</p>
+    <p class="hero-datalab">Analytics</p>
     <p class="hero-sub">Análisis avanzado de jugadores · Football Manager</p>
     <div class="step-row">
         <div class="step-item"><div class="step-num">1</div> Cargar CSV</div>
@@ -225,10 +225,11 @@ else:
     with col2:
         st.markdown(f'<div class="stat-box"><span class="stat-num">{len(df.columns)}</span><span class="stat-label">Columnas</span></div>', unsafe_allow_html=True)
     with col3:
-        pos = df["posición"].dropna().nunique() if "posición" in df.columns else 0
-        st.markdown(f'<div class="stat-box"><span class="stat-num">{pos}</span><span class="stat-label">Posiciones</span></div>', unsafe_allow_html=True)
+        # Calculamos el promedio de edad si la columna existe en el CSV
+        edad_promedio = round(df["edad"].mean(), 1) if "edad" in df.columns else "N/A"
+        st.markdown(f'<div class="stat-box"><span class="stat-num">{edad_promedio}</span><span class="stat-label">Edad Prom.</span></div>', unsafe_allow_html=True)
     with col4:
-        st.markdown(f'<div class="stat-box"><span class="stat-num">{len(stats_num)}</span><span class="stat-label">Stats</span></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="stat-box"><span class="stat-num">{len(stats_num)}</span><span class="stat-label">Stats numéricas</span></div>', unsafe_allow_html=True)
 
     st.markdown("---")
     st.markdown("## 🎯 ¿Qué querés hacer hoy?")
@@ -270,7 +271,6 @@ else:
 st.markdown("---")
 st.markdown("## 💡 Ejemplos de uso")
 
-# Acá podés editar todo el texto en HTML para dar tu mensaje al usuario
 st.markdown("""
 <div class="modo-card" style="height: auto; padding: 24px; text-align: left;">
 <h4 style="color: var(--text); font-family: var(--font-display); margin-top: 0; font-size: 1.2rem;">¿Cómo sacarle el máximo provecho a la herramienta?</h4>
@@ -309,6 +309,6 @@ de la selección que hayas cargado. Descubrí que jugador está rindiendo con un
 st.markdown("---")
 st.markdown("""
 <div style="text-align:center;color:#7a9eab;padding:16px;font-family:'DM Sans',sans-serif;font-size:0.85rem;">
-    <strong style="color:#4ecdc4;">FM DataLab v3</strong> · Streamlit Edition · Desarrollado para la comunidad de Football Manager
+    <strong style="color:#4ecdc4;">FM Analytics v3</strong> · Streamlit Edition · Desarrollado para la comunidad de Football Manager
 </div>
 """, unsafe_allow_html=True)
