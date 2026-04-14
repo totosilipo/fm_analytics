@@ -192,15 +192,76 @@ st.markdown(
 st.markdown("---")
 
 # ═══════════════════════════════════════════════════════════════
-# PANEL DE COMPARACIÓN
+# TABLA DEL DATASET (AHORA ARRIBA)
+# ═══════════════════════════════════════════════════════════════
+
+st.markdown("## 📋 Dataset")
+st.markdown("*Elegí un jugador de la lista para agregarlo al gráfico comparativo de abajo*")
+
+# Sacamos el selector afuera del IF para que sus datos puedan ser usados por el gráfico después
+xcl = {"jugador","posición","pos","nombre","equipo","club","edad","minutos"}
+stats_d = [c for c in df.columns if df[c].dtype in [np.float64, np.int64] and c not in xcl]
+
+cols_sel = st.multiselect("Estadísticas a mostrar en la tabla (y en el gráfico 'Personalizado')", options=stats_d,
+    default=stats_d[:8] if len(stats_d)>=8 else stats_d)
+
+if len(df_f) == 0:
+    st.markdown(
+        '<div class="fm-warning">⚠️ No hay jugadores que cumplan los filtros.</div>',
+        unsafe_allow_html=True)
+else:
+    base = [c for c in ["jugador","posición","minutos"] if c in df_f.columns]
+    cols_show = [c for c in base+cols_sel if c in df_f.columns]
+    df_disp = df_f[cols_show].copy()
+    for c in cols_sel:
+        if c in df_disp.columns:
+            df_disp[c] = df_disp[c].round(2)
+
+    # 1. Mostrar el dataframe de forma estática
+    st.dataframe(df_disp, use_container_width=True, hide_index=True)
+
+    # 2. Interfaz alternativa para seleccionar jugador
+    st.markdown("### ➕ Agregar jugador a la comparación")
+    c_sel, c_btn = st.columns([3, 1])
+
+    with c_sel:
+        # Menú desplegable con los jugadores filtrados
+        sel = st.selectbox(
+            "Seleccioná un jugador de la tabla:",
+            options=df_disp["jugador"].tolist()
+        )
+
+    with c_btn:
+        st.markdown("<br>", unsafe_allow_html=True) # Espaciador para alinear el botón
+        if st.button("Agregar al gráfico ⬇️", use_container_width=True, type="primary"):
+            if sel:
+                if sel not in st.session_state["jugadores_comparacion"]:
+                    if len(st.session_state["jugadores_comparacion"]) < 4:
+                        st.session_state["jugadores_comparacion"].append(sel)
+                        st.rerun()
+                    else:
+                        st.markdown(
+                            '<div class="fm-warning">⚠️ Máximo 4 jugadores. Eliminá uno abajo para agregar otro.</div>',
+                            unsafe_allow_html=True)
+                else:
+                    st.markdown(
+                        f'<div class="fm-info">ℹ️ <strong>{sel}</strong> ya está en la comparación.</div>',
+                        unsafe_allow_html=True)
+
+st.markdown("---")
+
+# ═══════════════════════════════════════════════════════════════
+# PANEL DE COMPARACIÓN (AHORA ABAJO)
 # ═══════════════════════════════════════════════════════════════
 
 if st.session_state["jugadores_comparacion"]:
-    st.markdown("## 👥 Jugadores Seleccionados")
+    st.markdown("## 📊 Comparación Visual")
+    
+    # Botones para eliminar jugadores seleccionados
     rm_cols = st.columns(len(st.session_state["jugadores_comparacion"]) + 1)
     for idx, nombre in enumerate(st.session_state["jugadores_comparacion"]):
         with rm_cols[idx]:
-            if st.button(f"❌ {nombre}", key=f"rm_{idx}"):
+            if st.button(f"❌ Quitar {nombre}", key=f"rm_{idx}"):
                 st.session_state["jugadores_comparacion"].remove(nombre)
                 st.rerun()
     with rm_cols[-1]:
@@ -208,13 +269,13 @@ if st.session_state["jugadores_comparacion"]:
             st.session_state["jugadores_comparacion"] = []
             st.rerun()
 
-    st.markdown("---")
-    st.markdown("## 📊 Comparación Visual")
+    st.markdown("<br>", unsafe_allow_html=True)
 
-    bc1, bc2, bc3 = st.columns(3)
-    for col_b, cat, em in zip([bc1,bc2,bc3],
-                               ["Ataque","Defensa","Centrocampista"],
-                               ["⚔️","🛡️","⚽"]):
+    # Selector de categoría para el Spider Graph (AHORA CON 4 COLUMNAS)
+    bc1, bc2, bc3, bc4 = st.columns(4)
+    for col_b, cat, em in zip([bc1, bc2, bc3, bc4],
+                               ["Ataque", "Defensa", "Centrocampista", "Personalizada"],
+                               ["⚔️", "🛡️", "⚽", "🛠️"]):
         with col_b:
             active = st.session_state["categoria_activa"] == cat
             if st.button(f"{em} {cat}", use_container_width=True,
@@ -222,11 +283,16 @@ if st.session_state["jugadores_comparacion"]:
                 st.session_state["categoria_activa"] = cat
                 st.rerun()
 
-    stats_cat = [s for s in CATEGORIAS[st.session_state["categoria_activa"]]
-                 if s in df.columns]
+    # LÓGICA PARA ELEGIR LAS ESTADÍSTICAS A GRAFICAR
+    if st.session_state["categoria_activa"] == "Personalizada":
+        stats_cat = [s for s in cols_sel if s in df.columns]
+    else:
+        stats_cat = [s for s in CATEGORIAS.get(st.session_state["categoria_activa"], [])
+                     if s in df.columns]
+                 
     if len(stats_cat) < 3:
         st.markdown(
-            '<div class="fm-warning">⚠️ No hay suficientes estadísticas para esta categoría.</div>',
+            '<div class="fm-warning">⚠️ Necesitás al menos 3 estadísticas para armar el gráfico radial. Agregá más en el selector de arriba.</div>',
             unsafe_allow_html=True)
     else:
         jdata = [(n, df[df["jugador"]==n].iloc[0])
@@ -238,7 +304,7 @@ if st.session_state["jugadores_comparacion"]:
             if fig:
                 st.plotly_chart(fig, use_container_width=True)
 
-        st.markdown("### 📋 Valores Detallados")
+        st.markdown("### 📋 Valores Detallados del Gráfico")
         tdata = []
         for nombre in st.session_state["jugadores_comparacion"]:
             rw = df[df["jugador"]==nombre]
@@ -253,50 +319,6 @@ if st.session_state["jugadores_comparacion"]:
                 tdata.append(fila)
         if tdata:
             st.dataframe(pd.DataFrame(tdata), use_container_width=True, hide_index=True)
-
-    st.markdown("---")
-
-# ═══════════════════════════════════════════════════════════════
-# TABLA DEL DATASET
-# ═══════════════════════════════════════════════════════════════
-
-st.markdown("## 📋 Dataset")
-st.markdown("*Click en una fila para agregar el jugador a la comparación*")
-
-if len(df_f) == 0:
-    st.markdown(
-        '<div class="fm-warning">⚠️ No hay jugadores que cumplan los filtros.</div>',
-        unsafe_allow_html=True)
-else:
-    xcl = {"jugador","posición","pos","nombre","equipo","club","edad","minutos"}
-    stats_d = [c for c in df.columns if df[c].dtype in [np.float64, np.int64] and c not in xcl]
-    cols_sel = st.multiselect("Estadísticas a mostrar", options=stats_d,
-        default=stats_d[:8] if len(stats_d)>=8 else stats_d)
-
-    base = [c for c in ["jugador","posición","minutos"] if c in df_f.columns]
-    cols_show = [c for c in base+cols_sel if c in df_f.columns]
-    df_disp = df_f[cols_show].copy()
-    for c in cols_sel:
-        if c in df_disp.columns:
-            df_disp[c] = df_disp[c].round(2)
-
-    event = st.dataframe(df_disp, use_container_width=True, hide_index=True,
-        on_select="rerun", selection_mode="single-row")
-
-    if event.selection and event.selection.rows:
-        sel = df_disp.iloc[event.selection.rows[0]]["jugador"]
-        if sel not in st.session_state["jugadores_comparacion"]:
-            if len(st.session_state["jugadores_comparacion"]) < 4:
-                st.session_state["jugadores_comparacion"].append(sel)
-                st.rerun()
-            else:
-                st.markdown(
-                    '<div class="fm-warning">⚠️ Máximo 4 jugadores. Eliminá uno para agregar otro.</div>',
-                    unsafe_allow_html=True)
-        else:
-            st.markdown(
-                f'<div class="fm-info">ℹ️ <strong>{sel}</strong> ya está en la comparación.</div>',
-                unsafe_allow_html=True)
 
 st.markdown("---")
 st.markdown(

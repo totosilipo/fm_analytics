@@ -134,6 +134,7 @@ st.markdown("---")
 # TABLA DE DIFERENCIAS
 # ═══════════════════════════════════════════════════════════════
 
+
 df_dif = df_f.copy()
 for s in cols_sel:
     if s in df_dif.columns:
@@ -156,41 +157,42 @@ if len(df_dif) == 0:
         '<div class="fm-warning">⚠️ No hay jugadores que cumplan los filtros.</div>',
         unsafe_allow_html=True)
 else:
+    # 1. Preparar las columnas a mostrar
     base_cols = [c for c in ["jugador","posición","minutos"] if c in df_dif.columns]
-    th_s = ("background:#1e2d3d;color:#4ecdc4;padding:10px 14px;text-align:center;"
-            "border-bottom:2px solid rgba(78,205,196,0.4);font-size:12px;"
-            "white-space:nowrap;font-family:'DM Sans',sans-serif;"
-            "font-weight:600;letter-spacing:0.5px;")
-    thead = "".join(f'<th style="{th_s}">{c}</th>' for c in base_cols + cols_sel)
+    dif_cols = [f"_dif_{s}" for s in cols_sel if f"_dif_{s}" in df_dif.columns]
+    
+    # 2. Crear dataframe para display y limpiar los nombres de las columnas
+    df_display = df_dif[base_cols + dif_cols].copy()
+    df_display = df_display.rename(columns={f"_dif_{s}": s for s in cols_sel})
+    
+    # 3. Función para dar color a los valores
+    def color_diferencias(val):
+        if isinstance(val, (int, float)) and not pd.isna(val):
+            if val > 0:
+                return 'color: #4ecdc4; font-weight: 700;' # Cyan
+            elif val < 0:
+                return 'color: #ef4444; font-weight: 700;' # Rojo
+        return ''
 
-    td_b = ("padding:9px 14px;text-align:center;"
-            "border-bottom:1px solid rgba(78,205,196,0.08);"
-            "font-size:13px;font-family:'DM Sans',sans-serif;")
+    # 4. Función para agregar el signo '+' a los positivos y manejar nulos
+    def formato_texto(val):
+        if pd.isna(val):
+            return "—"
+        if val > 0:
+            return f"+{val:.2f}"
+        return f"{val:.2f}"
 
-    rows_html = []
-    for i, (_, row) in enumerate(df_dif.iterrows()):
-        bg = "#1a2332" if i%2==0 else "#1c2838"
-        cells = []
-        for col in base_cols:
-            val = row.get(col,"")
-            if col == "minutos" and not pd.isna(val): val = int(val)
-            cells.append(f'<td style="{td_b}background:{bg};color:#e8f4f4;">{val}</td>')
-        for s in cols_sel:
-            dv = row.get(f"_dif_{s}", None)
-            if dv is None or (isinstance(dv,float) and pd.isna(dv)):
-                cells.append(f'<td style="{td_b}background:{bg};color:#7a9eab;">—</td>')
-            elif dv > 0:
-                cells.append(f'<td style="{td_b}background:{bg};color:#4ecdc4;font-weight:700;">+{dv:.2f}</td>')
-            else:
-                cells.append(f'<td style="{td_b}background:{bg};color:#ef4444;font-weight:700;">{dv:.2f}</td>')
-        rows_html.append(f'<tr>{"".join(cells)}</tr>')
+    # 5. Aplicar estilos y formatos usando Pandas Styler
+    styled_df = df_display.style.map(
+        color_diferencias,
+        subset=cols_sel
+    ).format(
+        {s: formato_texto for s in cols_sel}
+    )
 
-    st.markdown(f"""
-    <div style="overflow-x:auto;border-radius:10px;border:1px solid rgba(78,205,196,0.2);margin-bottom:24px;">
-    <table style="width:100%;border-collapse:collapse;background:#1a2332;">
-        <thead><tr>{thead}</tr></thead>
-        <tbody>{"".join(rows_html)}</tbody>
-    </table></div>""", unsafe_allow_html=True)
+    # 6. Mostrar la tabla nativa (¡Esto habilita el ordenamiento al hacer clic en las columnas!)
+    st.dataframe(styled_df, use_container_width=True, hide_index=True)
+
 
     # ── Análisis rápido ────────────────────────────────────────────
     st.markdown("### 💡 Análisis Rápido")

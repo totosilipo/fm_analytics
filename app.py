@@ -262,6 +262,46 @@ else:
         if st.button("Ir a Diferencias →", use_container_width=True):
             st.switch_page("pages/3_📊_Diferencias.py")
 
+
+# ═══════════════════════════════════════════════════════════════
+# EJEMPLOS DE USO
+# ═══════════════════════════════════════════════════════════════
+
+st.markdown("---")
+st.markdown("## 💡 Ejemplos de uso")
+
+# Acá podés editar todo el texto en HTML para dar tu mensaje al usuario
+st.markdown("""
+<div class="modo-card" style="height: auto; padding: 24px; text-align: left;">
+<h4 style="color: var(--text); font-family: var(--font-display); margin-top: 0; font-size: 1.2rem;">¿Cómo sacarle el máximo provecho a la herramienta?</h4>
+<div style="color: var(--text-muted); font-family: var(--font-body); line-height: 1.6; font-size: 0.95rem;">
+        
+<p><strong style="color: var(--accent);">1. Encontrar al reemplazo perfecto (Similitud):</strong><br>
+¿Vendiste a tu mediocampista estrella y estas luchando por encontrar el reemplazo perfecto?. Vas a <em>Similitud</em>, 
+elegís el perfil "Todoterreno" (o el que mejor se adapte a tu táctica), filtrás por la posición exacta y el algoritmo te va a devolver 
+los jugadores de tu base de datos que estadísticamente juegan más parecido a él. Eso no significa que sea el mejor. 
+Por eso te recomiendo que analices más allá del top 10 que devuelve la tabla. Tomate el tiempo de ver jugador por jugador!</p>
+        
+<p><strong style="color: var(--accent);">2. Scouting cara a cara (Comparación):</strong><br>
+¿Estás indeciso entre varios jugadores para fichar? ¿Querés evaluar que jugador de tu plantel rindió mejor?. Con la herramienta de <em>Comparación</em>, 
+podés ver detalladamente todas sus estadisticas. También podes seleccionarlos para obtener una vista más personalizada o seleccionarlos para verlos en un
+gráfico radial con todas sus estadisticas. </p>
+        
+<p><strong style="color: var(--accent);">3. Analisis respecto al promedio (Diferencias):</strong><br>
+¿Querés saber que jugador de tu plantel da los mejores pases? ¿Querés ver que tan bien lo hace tu delantero respecto a los de su liga?. 
+Vas a <em>Diferencias</em>, elegís las estadisticas que quieras y la tabla te mostrará qué jugador está rompiendo la métrica muy por encima del promedio general 
+de la selección que hayas cargado. Descubrí que jugador está rindiendo con un nivel mejor que el promedio!.</p>
+
+<p><strong style="color: var(--accent);"> Recordá descargar nuestra view para tener todas las estadisticas a la hora de exportar la base de datos.
+</div>
+</div>
+""", unsafe_allow_html=True)
+
+
+# ═══════════════════════════════════════════════════════════════
+# FOOTER
+# ═══════════════════════════════════════════════════════════════
+# (Tu código del footer sigue acá abajo...)
 # ═══════════════════════════════════════════════════════════════
 # FOOTER
 # ═══════════════════════════════════════════════════════════════
